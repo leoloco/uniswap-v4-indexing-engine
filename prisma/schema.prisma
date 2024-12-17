@@ -1,0 +1,70 @@
+// Prisma schema for tracking server state and reward campaigns
+
+model Position {
+  id            String      @id
+  liquidity     BigInt
+  accountId     String // Address of the LP
+  poolKey       String 
+  tickLower     String // Lower tick of the position necessary to compute LP rewards
+  tickUpper     String // Upper tick of the position necessary to compute LP rewards
+  transactionId String 
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  createdAt     DateTime    @default(now()) 
+  updatedAt     DateTime    @updatedAt
+
+  User User[]
+}
+
+model Swap {
+  id            String      @id
+  poolKey       String 
+  currency0     String 
+  currency1     String
+  sender        String 
+  liquidity     BigInt 
+  sqrtPriceX96  BigInt // 2^(96) scalled Sqrt price of the pool necessary to compute rewards
+  amount0Delta  BigInt // Amount of currency0 swapped 
+  amount1Delta  BigInt // Amount of currency1 swapped
+  tick          BigInt // Tick after the swap necessary to compute rewards
+  transactionId String 
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  createdAt     DateTime    @default(now()) // When the swap occurred
+
+  User User[]
+}
+
+model Transaction {
+  id          String     @id
+  timestamp   BigInt
+  blockNumber Int
+  positions   Position[] // Positions linked to the transaction
+  swaps       Swap[] // Swaps linked to the transaction
+  createdAt   DateTime   @default(now()) // When the transaction record was created
+}
+
+model User {
+  id        String     @id
+  address   String     @unique
+  positions Position[] // Positions linked to the user
+  swaps     Swap[] // Swaps linked to the user
+  createdAt DateTime   @default(now()) // When the user was created
+}
+
+// Model to track server state: last processed block number
+model ServerState {
+  id                       String   @id @default("1") // Single entry to store the last processed block
+  lastProcessedBlockNumber Int // The block number of the last processed event
+  updatedAt                DateTime @updatedAt // When the state was last updated
+}
+
+// Model for reward campaigns
+model Campaign {
+  id           String   @id @default(uuid())
+  poolKey      String 
+  rewardToken  String // Reward token address
+  rewardAmount BigInt 
+  startDate    DateTime // Campaign start date
+  endDate      DateTime // Campaign end date
+  createdAt    DateTime @default(now()) // When the campaign was created
+  active       Boolean  @default(true) // Indicates if the campaign is still active
+}

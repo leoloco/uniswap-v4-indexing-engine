@@ -1,0 +1,28 @@
+# Based on this Univ4 subgraph schema https://github.com/UniKits-Dev/uniswap-v4-subgraph/blob/main/schema.graphql
+# Provided by UniKits-Dev 
+  {
+  swaps(where: {
+    poolKey: "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+    transaction: {
+      timestamp_gte: "15978635278837"
+    }
+  }) {
+    id
+    poolKey
+    currency0
+    currency1
+    sender
+    liquidity
+    sqrtPriceX96
+    amount0Delta
+    amount1Delta
+    tick
+    logIndex
+    token0Price
+    token1Price
+    transaction {
+      id
+      timestamp
+    }
+  }
+}

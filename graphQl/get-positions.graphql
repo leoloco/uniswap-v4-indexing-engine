@@ -1,0 +1,29 @@
+# Based on this Univ4 subgraph schema https://github.com/UniKits-Dev/uniswap-v4-subgraph/blob/main/schema.graphql
+# Provided by UniKits-Dev 
+{
+  positions(first: 10, where: {
+    poolKey: "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+    liquidity_gt: 0,
+    transaction: { blockNumber_gte: "LAST_PROCESSED_BLOCK_NUMBER" }
+  }) {
+    id
+    liquidity
+    account {
+      id
+    }
+    pool {
+      id
+    }
+    tickLower {
+      id
+    }
+    tickUpper {
+      id
+    }
+    depositCount
+    transaction {
+      id
+      blockNumber
+    }
+  }
+}
