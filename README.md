@@ -209,9 +209,9 @@ LP fees are collected when swaps occur within the range (tickLower, tickUpper) o
 
     The fee for each position can be computed as:
 
-    $$
+    $
     \text{Position Fee Share} = \frac{\text{Position Liquidity}}{\text{Total Active Liquidity}} \times \text{Swap Fee Amount}
-    $$
+    $
 
     You can compute this for both `amount0Delta` and `amount1Delta`.
 
@@ -255,6 +255,6 @@ LP fees are collected when swaps occur within the range (tickLower, tickUpper) o
     ```
     The reward for each position can be computed as:
 
-    $$
+    $
     \text{Position Reward} = \frac{\text{Position Fees}}{\text{Total Fees Collected}} \times \text{Campaign Reward Amount Per epoch}
-    $$
+    $
