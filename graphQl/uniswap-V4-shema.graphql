@@ -11,7 +11,6 @@ type ContractStat @entity {
   swapCnt: BigInt!
   # total liquidity
   totalLiquidity: BigInt!
-
   # current owner of the factory
   owner: ID!
 }
@@ -51,6 +50,7 @@ type Swap @entity {
   amount1Delta: BigInt!
   tick: BigInt!
   logIndex: BigInt
+  fee:BigInt!
   # derived from sqrtPriceX96
   token0Price: BigDecimal!
   token1Price: BigDecimal!

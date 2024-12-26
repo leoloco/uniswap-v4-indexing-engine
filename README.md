@@ -54,7 +54,7 @@ The price at a given tick $ t $ is defined as:
 
 **Non-Fungible Liquidity Positions**  
 
-In Uniswap V2, liquidity positions were fungible and represented by ERC20 LP tokens because liquidity was uniformly distributed. In Uniswap V3, liquidity positions are **non-fungible because each LP can specify a unique price range. These positions are represented as NFTs, where each NFT encodes:  
+In Uniswap V2, liquidity positions were fungible and represented by ERC20 LP tokens because liquidity was uniformly distributed. In Uniswap V3, liquidity positions are non-fungible because each LP can specify a unique price range. These positions are represented as NFTs, where each NFT encodes:  
 - The amount of liquidity provided,  
 - The specified price range defined by lower and upper ticks.
 
@@ -185,6 +185,7 @@ LP fees are collected when swaps occur within the range (tickLower, tickUpper) o
         tick: true,
         amount0Delta: true,
         amount1Delta: true,
+        fee:true,
         createdAt: true,
       },
     });
@@ -213,7 +214,7 @@ LP fees are collected when swaps occur within the range (tickLower, tickUpper) o
     \text{Position Fee Share} = \frac{\text{Position Liquidity}}{\text{Total Active Liquidity}} \times \text{Swap Fee Amount}
     $
 
-    You can compute this for both `amount0Delta` and `amount1Delta`.
+    Given the swap fee tier, you can compute this for both `amount0Delta` and `amount1Delta`.
 
 4. Aggregate Fees Across All Swaps
 
@@ -222,21 +223,23 @@ LP fees are collected when swaps occur within the range (tickLower, tickUpper) o
     ```ts
       const positionFees = {}; // To store cumulative fees for positions
 
-    relevantSwaps.forEach((swap) => {
-      const activePositions = getPositionsInRange(swap.tick);
+      relevantSwaps.forEach((swap) => {
+        const activePositions = getPositionsInRange(swap.tick);
 
-      const totalLiquidity = activePositions.reduce((sum, pos) => sum + BigInt(pos.liquidity), BigInt(0));
+        const totalLiquidity = activePositions.reduce((sum, pos) => sum + BigInt(pos.liquidity), BigInt(0));
 
-      activePositions.forEach((position) => {
-        const positionShare = BigInt(position.liquidity) * BigInt(swap.amount0Delta + swap.amount1Delta) / totalLiquidity;
+        const swapFeeAmount = BigInt(swap.amount0Delta + swap.amount1Delta) * BigInt(swap.fee) / BigInt(1e6); // Fee is usually in basis points (1e6 scaling)
 
-        if (!positionFees[position.id]) {
-          positionFees[position.id] = BigInt(0);
-        }
+        activePositions.forEach((position) => {
+          const positionShare = (BigInt(position.liquidity) * swapFeeAmount) / totalLiquidity;
 
-        positionFees[position.id] += positionShare;
+          if (!positionFees[position.id]) {
+            positionFees[position.id] = BigInt(0);
+          }
+
+          positionFees[position.id] += positionShare;
+        });
       });
-    });
     ```
 
 5. Compute Reward Shares

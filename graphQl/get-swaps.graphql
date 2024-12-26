@@ -20,6 +20,7 @@
     logIndex
     token0Price
     token1Price
+    fee
     transaction {
       id
       timestamp
