@@ -26,6 +26,7 @@ model Swap {
   amount0Delta  BigInt // Amount of currency0 swapped 
   amount1Delta  BigInt // Amount of currency1 swapped
   tick          BigInt // Tick after the swap necessary to compute rewards
+  fee           BigInt // Fee of the swap in basis points (scaled 1e6)
   transactionId String 
   transaction   Transaction @relation(fields: [transactionId], references: [id])
   createdAt     DateTime    @default(now()) // When the swap occurred
